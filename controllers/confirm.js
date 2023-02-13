@@ -3,22 +3,23 @@ const Confirm = require("../models/Confirm");
 
 const getConfirms = async (req, res = response) => {
   const inv = req.query.inv;
-  const confirmId = await Confirm.find({ inv: inv });
+  const confirmId = await Confirm.findOne({ inv: inv });
 
   if (inv) {
     try {
-      if (confirmId.length === 0) {
+      if (confirmId === null) {
         return res.status(404).json({
           ok: false,
           msg: "No confirm found with that inv",
         });
+      } else {
+        res.json({
+          ok: true,
+          msg: "Confirm inv found",
+          confirmId,
+        });
       }
-      res.json({
-        ok: true,
-        confirmId,
-      });
     } catch (error) {
-      console.log(error);
       res.status(404).json({
         ok: false,
         msg: error,
@@ -34,13 +35,29 @@ const getConfirms = async (req, res = response) => {
 };
 
 const createConfirm = async (req, res = response) => {
-  const { inv, name, quantity } = req.body;
+  const { inv, guests, quantity } = req.body;
   const confirm = new Confirm(req.body);
-  await confirm.save();
-  res.json({
-    ok: true,
-    confirm,
-  });
+  const invExist = await Confirm.findOne({ inv });
+
+  if (invExist) {
+    return res.status(409).json({
+      ok: false,
+      msg: "Inv already exist",
+    });
+  }
+
+  try {
+    const confirmDb = await confirm.save();
+    res.json({
+      ok: true,
+      confirm: confirmDb,
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: "Please contact the administrator",
+    });
+  }
 };
 
 module.exports = {

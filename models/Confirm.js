@@ -2,13 +2,13 @@ const { Schema, model } = require("mongoose");
 
 const confirmSchema = Schema({
   inv: {
-    type: String,
-    required: [true, "ID is required"],
+    type: Number,
+    required: [true, "Inv is required"],
     unique: true,
   },
-  name: {
+  guests: {
     type: String,
-    required: [true, "Name is required"],
+    required: [true, "Guests is required"],
   },
   quantity: {
     type: Number,
