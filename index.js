@@ -20,6 +20,7 @@ app.use(express.static("public"));
 
 // Routes
 app.use("/api/confirm", require("./routes/confirm"));
+app.use("/api/guests", require("./routes/guests"));
 
 // Listen
 app.listen(process.env.PORT, () => {
